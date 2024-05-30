@@ -1,10 +1,11 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { appConfig } from './appConfig.js';
 
-mongoose.set("strictQuery", false);
+mongoose.set('strictQuery', false);
 
 const connectDB = async () => {
   try {
-    const conn = await mongoose.connect(process.env.MONGO_URL);
+    const conn = await mongoose.connect(appConfig.mongoUrl);
     console.log(`mongo db connected to ${conn.connection.host}`);
   } catch (error) {
     console.log(`Error: ${error.message}`);
