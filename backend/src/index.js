@@ -9,7 +9,7 @@ import dotenv from 'dotenv';
 // });
 dotenv.config();
 
-
+import cookieParser from 'cookie-parser';
 import morgan from 'morgan';
 import helmet from 'helmet';
 import xss from 'xss-clean';
@@ -20,6 +20,9 @@ import connectDB from './config/connectDb.js';
 import notFound from './middleware/notFound.js';
 import errorHandler from './middleware/errorHandler.js';
 import { appConfig } from './config/appConfig.js';
+
+import authRouter from './router/authRouter.js';
+import userRouter from './router/userRouter.js';
 
 connectDB();
 const app = express();
@@ -49,6 +52,8 @@ app.use(
     type: ['application/json', 'text/plain'],
   }),
 );
+app.use(express.urlencoded({ extended: true }));
+app.use(cookieParser());
 app.use(helmet());
 app.use(xss());
 app.use(mongoSanitize());
@@ -56,6 +61,9 @@ app.use(morgan('tiny'));
 app.get('/check', async (req, res) => {
   return res.status(200).send('server live!');
 });
+
+app.use('/api/auth', authRouter);
+app.use('/api/users', userRouter);
 
 app.use(notFound);
 app.use(errorHandler);

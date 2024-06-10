@@ -14,7 +14,7 @@ class APIError extends Error {
 
 /** Generates a custom api error with given message and status code. */
 const generateAPIError = (msg, statusCode, customData = {}) => {
-  return new APIError(msg, statusCode, customData);
+  throw new APIError(msg, statusCode, customData);
 };
 
-module.exports = { generateAPIError, APIError };
+export { generateAPIError, APIError };
