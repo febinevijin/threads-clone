@@ -21,6 +21,23 @@ const signUpUser = async (userData, next) => {
   }
 };
 
+const loginUser = async (loginData, next) => {
+  const { userName, password } = loginData;
+  const user = await User.findOne({ $text: { $search: userName } }).select(
+    '_id password name email userName',
+  );
+  if (user && (await bcrypt.compare(password, user.password))) {
+    // Destructure the user object to exclude the password field
+    const { password, ...userWithoutPassword } = user.toObject();
+
+    // Return the user object without the password field
+    return userWithoutPassword;
+  } else {
+    return next(generateAPIError('Invalid username or password', 400));
+  }
+};
+
 export const authService = {
   signUpUser,
+  loginUser,
 };

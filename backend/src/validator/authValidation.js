@@ -26,3 +26,12 @@ export const userSignUpValidation = Joi.object({
     .min(3) // Ensure at least one character is present
     .required(),
 });
+export const userLoginValidation = Joi.object({
+  password: Joi.string().min(8).required().messages({
+    'string.min': 'Password must be more than 8 characters long.',
+  }),
+
+  userName: Joi.string()
+    .min(3) // Ensure at least one character is present
+    .required(),
+});
