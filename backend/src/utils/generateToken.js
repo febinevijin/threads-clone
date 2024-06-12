@@ -4,7 +4,7 @@ const generateTokenAndSetCookies = (userId, res) => {
     expiresIn: '15d',
   });
 
-  res.cookie('jwt', token, {
+  res.cookie('threadsUser', token, {
     httpOnly: true, // more secure
     maxAge: 15 * 24 * 60 * 60 * 1000, // 15 days
     sameSite: 'strict', // CSRF

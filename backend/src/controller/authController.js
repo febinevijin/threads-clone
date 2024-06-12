@@ -38,3 +38,11 @@ export const loginUser = errorWrapper(async (req, res, next) => {
     status: 200,
   });
 });
+
+export const logoutUser = errorWrapper(async (req, res) => {
+  res.cookie('threadsUser', '', { maxAge: 1 });
+  return responseUtils.success(res, {
+    data: 'logout successful',
+    status: 200,
+  });
+});
