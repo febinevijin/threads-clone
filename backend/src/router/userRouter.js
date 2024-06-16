@@ -3,6 +3,6 @@ import { followUnFollowUser } from '../controller/userController.js';
 import { protect } from '../middleware/auth.js';
 const router = express.Router();
 
-router.get('/follow', protect, followUnFollowUser);
+router.put('/follow/:id', protect, followUnFollowUser);
 
 export default router;
