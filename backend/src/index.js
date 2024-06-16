@@ -63,7 +63,7 @@ app.get('/check', async (req, res) => {
 });
 
 app.use('/api/auth', authRouter);
-app.use('/api/users', userRouter);
+app.use('/api/user', userRouter);
 
 app.use(notFound);
 app.use(errorHandler);

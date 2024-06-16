@@ -13,4 +13,13 @@ const generateTokenAndSetCookies = (userId, res) => {
   return token;
 };
 
+export const verifyAccessKey = (token, secretKey) => {
+  try {
+    const payload = jwt.verify(token, secretKey);
+    return payload;
+  } catch (err) {
+    console.log(err);
+  }
+};
+
 export default generateTokenAndSetCookies;

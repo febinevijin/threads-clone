@@ -31,6 +31,7 @@ export const loginUser = errorWrapper(async (req, res, next) => {
     return next(generateAPIError(error.details[0].message, 400));
   }
   const data = await authService.loginUser(req.body, next);
+
   // create token and set up cookie
   generateTokenAndSetCookies(data._id, res);
   return responseUtils.success(res, {
