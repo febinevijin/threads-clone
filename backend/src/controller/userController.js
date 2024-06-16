@@ -17,3 +17,13 @@ export const followUnFollowUser = errorWrapper(async (req, res, next) => {
     status: 200,
   });
 });
+
+export const updateUserProfile = errorWrapper(async (req, res, next) => {
+  const { id } = req.params;
+  if (!id) return next(generateAPIError('id should be provided', 400));
+  const data = await userService.updateUserProfile(id, req.body, next);
+  return responseUtils.success(res, {
+    data,
+    status: 200,
+  });
+});

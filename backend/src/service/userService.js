@@ -77,10 +77,46 @@ const followUnFollow = async (id, currentUserId, next) => {
   }
 };
 
+const updateUserProfile = async (id, userData, next) => {
+  const { name, email, userName, bio } = userData;
+  const checkUser = await getUserDetailsById(id, next);
+  // check user exist with same email or userName
+  const query = {
+    $or: [{ email }, { userName }],
+    _id: { $ne: checkUser._id },
+  };
+
+  const existingUser = await User.findOne(query).select('email userName');
+  if (existingUser) {
+    if (existingUser.email === email) {
+      return next(generateAPIError('Email already exists', 400));
+    }
+    if (existingUser.userName === userName) {
+      return next(generateAPIError('Username already exists', 400));
+    }
+  }
+  // update profile
+  const updateProfile = await User.findOneAndUpdate(
+    { _id: checkUser._id },
+    {
+      $set: {
+        name,
+        email,
+        userName,
+        bio,
+      },
+    },
+  );
+  return {
+    message: 'profile updated',
+  };
+};
+
 export const commonUserService = {
   getUserDetailsById,
 };
 
 export const userService = {
   followUnFollow,
+  updateUserProfile,
 };
