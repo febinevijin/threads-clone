@@ -9,7 +9,7 @@ export const followUnFollowUser = errorWrapper(async (req, res, next) => {
   const currentUserId = req.user._id;
   if (id === currentUserId)
     return next(
-      generateAPIError('You are not allowed to follow/unfollow uourself', 400),
+      generateAPIError('You are not allowed to follow/unfollow yourself', 400),
     );
   const data = await userService.followUnFollow(id, currentUserId, next);
   return responseUtils.success(res, {
