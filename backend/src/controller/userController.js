@@ -1,6 +1,6 @@
 import { generateAPIError } from '../error/apiError.js';
 import errorWrapper from '../middleware/errorWrapper.js';
-import { userService } from '../service/userService.js';
+import { commonUserService, userService } from '../service/userService.js';
 import { responseUtils } from '../utils/responseUtils.js';
 
 export const followUnFollowUser = errorWrapper(async (req, res, next) => {
@@ -12,6 +12,19 @@ export const followUnFollowUser = errorWrapper(async (req, res, next) => {
       generateAPIError('You are not allowed to follow/unfollow uourself', 400),
     );
   const data = await userService.followUnFollow(id, currentUserId, next);
+  return responseUtils.success(res, {
+    data,
+    status: 200,
+  });
+});
+
+export const getProfile = errorWrapper(async (req, res, next) => {
+  const userDetailsFlag = true;
+  const data = await commonUserService.getUserDetailsById(
+    req.user._id,
+    userDetailsFlag,
+    next,
+  );
   return responseUtils.success(res, {
     data,
     status: 200,

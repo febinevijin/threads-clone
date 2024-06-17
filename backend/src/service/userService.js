@@ -2,12 +2,12 @@ import { generateAPIError } from '../error/apiError.js';
 import User from '../model/userModel.js';
 import mongoose from 'mongoose';
 
-const getUserDetailsById = async (id, followerDetails = false, next) => {
+const getUserDetailsById = async (id, userDetailsFlag = false, next) => {
   if (!id) {
     return next(generateAPIError('Must pass user _id', 400));
   }
-  // Select fields based on followerDetails flag
-  const fieldsToSelect = followerDetails
+  // Select fields based on userDetailsFlag flag
+  const fieldsToSelect = userDetailsFlag
     ? '-password'
     : '-password -following -followers';
   // Find the user by id and select the required fields
@@ -18,10 +18,10 @@ const getUserDetailsById = async (id, followerDetails = false, next) => {
 
 const followUnFollow = async (id, currentUserId, next) => {
   const userToModify = await getUserDetailsById(id, next);
-  const followerDetails = true;
+  const userDetailsFlag = true;
   const currentUser = await getUserDetailsById(
     currentUserId,
-    followerDetails,
+    userDetailsFlag,
     next,
   );
   const isFollowing = currentUser.following.includes(id);

@@ -24,7 +24,11 @@ export const userSignUpValidation = Joi.object({
 
   userName: Joi.string()
     .min(3) // Ensure at least one character is present
-    .required(),
+    .required()
+    .pattern(/^\S*$/, 'no spaces') // This pattern disallows spaces
+    .messages({
+      'string.pattern.name': 'Username should not contain spaces', // Custom error message
+    }),
 });
 export const userLoginValidation = Joi.object({
   password: Joi.string().min(8).required().messages({
@@ -33,7 +37,11 @@ export const userLoginValidation = Joi.object({
 
   userName: Joi.string()
     .min(3) // Ensure at least one character is present
-    .required(),
+    .required()
+    .pattern(/^\S*$/, 'no spaces') // This pattern disallows spaces
+    .messages({
+      'string.pattern.name': 'Username should not contain spaces', // Custom error message
+    }),
 });
 export const userProfileValidation = Joi.object({
   name: Joi.string()
@@ -59,5 +67,9 @@ export const userProfileValidation = Joi.object({
 
   userName: Joi.string()
     .min(3) // Ensure at least one character is present
-    .required(),
+    .required()
+    .pattern(/^\S*$/, 'no spaces') // This pattern disallows spaces
+    .messages({
+      'string.pattern.name': 'Username should not contain spaces', // Custom error message
+    }),
 });

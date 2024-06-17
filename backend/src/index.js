@@ -62,6 +62,7 @@ app.get('/check', async (req, res) => {
   return res.status(200).send('server live!');
 });
 
+// routes
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 
