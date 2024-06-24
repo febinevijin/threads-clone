@@ -33,7 +33,7 @@ export const getProfile = errorWrapper(async (req, res, next) => {
 
 export const updateUserProfile = errorWrapper(async (req, res, next) => {
   const { id } = req.params;
-  if (!id) return next(generateAPIError('id should be provided', 400));
+  if (!id || id === undefined) return next(generateAPIError('id should be provided', 400));
   const data = await userService.updateUserProfile(id, req.body, next);
   return responseUtils.success(res, {
     data,

@@ -8,6 +8,7 @@ import AuthPage from "./pages/AuthPage"
 import { useRecoilValue } from "recoil"
 import userAtom from "./atoms/userAtom"
 import LogoutButton from "./components/LogoutButton"
+import UpdateProfilePage from "./pages/UpdateProfilePage"
 
 
 
@@ -25,6 +26,10 @@ function App() {
         <Route
           path="/auth"
           element={!user ? <AuthPage /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/update"
+          element={user ? <UpdateProfilePage/> : <Navigate to="/" />}
         />
         <Route path="/:userName" element={<UserPage />} />
         <Route path="/:userName/post/:pid" element={<PostPage />} />

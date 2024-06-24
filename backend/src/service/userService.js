@@ -1,6 +1,7 @@
 import { generateAPIError } from '../error/apiError.js';
 import User from '../model/userModel.js';
 import mongoose from 'mongoose';
+import cloudinary from '../utils/cloudinary.js';
 
 const getUserDetailsById = async (id, userDetailsFlag = false, next) => {
   if (!id) {
@@ -79,7 +80,9 @@ const followUnFollow = async (id, currentUserId, next) => {
 
 const updateUserProfile = async (id, userData, next) => {
   const { name, email, userName, bio } = userData;
-  const checkUser = await getUserDetailsById(id, next);
+  let { profilePic } = userData;
+  const userDetailsFlag = true;
+  const checkUser = await getUserDetailsById(id, userDetailsFlag, next);
   // check user exist with same email or userName
   const query = {
     $or: [{ email }, { userName }],
@@ -95,6 +98,19 @@ const updateUserProfile = async (id, userData, next) => {
       return next(generateAPIError('Username already exists', 400));
     }
   }
+
+  // upload profile picture to cloudinary
+
+  if (profilePic) {
+    if (checkUser.profilePic) {
+      await cloudinary.uploader.destroy(
+        checkUser.profilePic.split('/').pop().split('.')[0],
+      );
+    }
+    const uploadedResponse = await cloudinary.uploader.upload(profilePic);
+    profilePic = uploadedResponse.secure_url;
+  }
+  // process.exit(1);
   // update profile
   const updateProfile = await User.findOneAndUpdate(
     { _id: checkUser._id },
@@ -104,10 +120,17 @@ const updateUserProfile = async (id, userData, next) => {
         email,
         userName,
         bio,
+        profilePic,
       },
     },
+    {
+      new: true, // To return the updated document
+      projection: 'name email userName bio profilePic', // To return only specified fields
+    },
   );
+
   return {
+    userData: updateProfile,
     message: 'profile updated',
   };
 };
