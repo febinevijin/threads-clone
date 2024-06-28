@@ -14,7 +14,28 @@ const getUserDetailsById = async (id, userDetailsFlag = false, next) => {
   // Find the user by id and select the required fields
   const user = await User.findById(id).select(fieldsToSelect);
   if (!user) return next(generateAPIError('user not found', 400));
-  return user;
+ 
+  return user
+
+};
+
+const postPageProfile = async (userId, id, next) => {
+  console.log(id);
+  const user = await User.findById(id).select('-password ');
+  console.log(user);
+  if (!user) return next(generateAPIError('user not found', 400));
+  //  // Find the post user and check if the id is present in the following array
+  const isFollow = await User.findOne({
+    _id: userId,
+    following: { $elemMatch: { $eq: id } },
+  });
+  // Convert the post document to a plain JavaScript object
+  const userObject = user.toObject();
+  if (isFollow) {
+    return { ...userObject, isFollowing: true };
+  } else {
+    return { ...userObject, isFollowing: false };
+  }
 };
 
 const followUnFollow = async (id, currentUserId, next) => {
@@ -142,4 +163,5 @@ export const commonUserService = {
 export const userService = {
   followUnFollow,
   updateUserProfile,
+  postPageProfile,
 };

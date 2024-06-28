@@ -35,9 +35,9 @@ export const getPostById = errorWrapper(async (req, res, next) => {
   // };
 
   const id = req.params.id;
-
+  const userId = req.user._id;
   if (!id) return next(generateAPIError('must provide post id', 400));
-  const data = await postService.getPostById(id, next);
+  const data = await postService.getPostById(id, userId, next);
   return responseUtils.success(res, {
     data,
     status: 200,

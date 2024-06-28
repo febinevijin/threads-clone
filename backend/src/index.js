@@ -53,7 +53,7 @@ app.use(
   express.json({
     limit: '10mb', // Set the desired limit, e.g., 10MB
     type: ['application/json', 'text/plain'],
-  })
+  }),
 );
 
 // Increase the payload limit for express.urlencoded()
@@ -61,7 +61,7 @@ app.use(
   express.urlencoded({
     limit: '10mb', // Set the desired limit, e.g., 10MB
     extended: true,
-  })
+  }),
 );
 app.use(cookieParser());
 app.use(helmet());

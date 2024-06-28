@@ -11,7 +11,7 @@ const getPost = async (userId, options, next) => {
   const posts = await Post.find({ postedBy: { $in: following } }, {}, options);
   return posts;
 };
-const getPostById = async (id, next) => {
+const getPostById = async (id, userId, next) => {
   const post = await Post.findById(id);
   if (!post) {
     return next(generateAPIError('post not found', 400));
