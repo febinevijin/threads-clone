@@ -9,7 +9,12 @@ const getPost = async (userId, options, next) => {
     return next(generateAPIError('user not found', 400));
   }
   const following = user.following;
-  const posts = await Post.find({ postedBy: { $in: following } }, {}, options);
+  // const posts = await Post.find({ postedBy: { $in: following } }, {}, options);
+  const posts = await Post.find(
+    { postedBy: { $in: following } },
+    {},
+    options,
+  ).populate('replies.userId', 'name userName profilePic');
   return posts;
 };
 const getPostById = async (id, userId, next) => {
