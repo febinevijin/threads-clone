@@ -1,6 +1,7 @@
 import { generateAPIError } from '../error/apiError.js';
 import Post from '../model/postModel.js';
 import User from '../model/userModel.js';
+import cloudinary from '../utils/cloudinary.js';
 
 const getPost = async (userId, options, next) => {
   const user = await User.findById(userId);
@@ -20,12 +21,14 @@ const getPostById = async (id, userId, next) => {
 };
 
 const createPost = async (postData, userId, next) => {
-  const { text, img } = postData;
+  let { text, img } = postData;
+  if (img) {
+    const uploadedResponse = await cloudinary.uploader.upload(img);
+    img = uploadedResponse.secure_url;
+  }
   const newPost = new Post({ postedBy: userId, text, img });
   await newPost.save();
-  return {
-    message: 'post created successfully',
-  };
+  return newPost;
 };
 
 const deletePost = async (id, next) => {

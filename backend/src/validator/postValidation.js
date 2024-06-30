@@ -11,6 +11,7 @@ export const userPostValidation = Joi.object({
   //   }
   //   return value;
   // }),
+  img: Joi.string(),
 });
 export const userReplyValidation = Joi.object({
   text: Joi.string()
