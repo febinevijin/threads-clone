@@ -17,8 +17,19 @@ const getPost = async (userId, options, next) => {
   ).populate('replies.userId', 'name userName profilePic');
   return posts;
 };
+
 const getPostById = async (id, userId, next) => {
   const post = await Post.findById(id);
+  if (!post) {
+    return next(generateAPIError('post not found', 400));
+  }
+  return post;
+};
+
+const getUserPost = async ( userId, next) => {
+  const post = await Post.find({ postedBy: userId })
+    .sort({ createdAt: -1 })
+    .populate('replies.userId', 'name userName profilePic');
   if (!post) {
     return next(generateAPIError('post not found', 400));
   }
@@ -41,6 +52,10 @@ const deletePost = async (id, next) => {
   if (!post) {
     return next(generateAPIError('post not found', 400));
   }
+  	if (post.img) {
+      const imgId = post.img.split('/').pop().split('.')[0];
+      await cloudinary.uploader.destroy(imgId);
+    }
   await Post.findByIdAndDelete(id);
 
   return { message: 'post deleted' };
@@ -80,6 +95,7 @@ export const postService = {
   createPost,
   getPost,
   getPostById,
+  getUserPost,
   deletePost,
   togglePostLike,
   replyToPost,

@@ -46,7 +46,7 @@ const Post = ({ post, postedBy }) => {
       e.preventDefault();
       if (!window.confirm("Are you sure you want to delete this post?")) return;
 
-      const res = await fetch(`/api/posts/${post._id}`, {
+      const res = await fetch(`/api/post/delete/${post._id}`, {
         method: "DELETE",
       });
       const data = await res.json();
@@ -54,6 +54,10 @@ const Post = ({ post, postedBy }) => {
         showToast("Error", data.error, "error");
         return;
       }
+        if (data.success === false && data.status === "failure") {
+          showToast("Error", data.message, "error");
+          return;
+        }
       showToast("Success", "Post deleted", "success");
       setPosts(posts.filter((p) => p._id !== post._id));
     } catch (error) {

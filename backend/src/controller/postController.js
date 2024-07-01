@@ -44,6 +44,16 @@ export const getPostById = errorWrapper(async (req, res, next) => {
   });
 });
 
+export const getUserPost = errorWrapper(async (req, res, next) => {
+  const userId = req.user._id;
+  console.log(userId);
+  const data = await postService.getUserPost(userId, next);
+  return responseUtils.success(res, {
+    data,
+    status: 200,
+  });
+});
+
 export const createPost = errorWrapper(async (req, res, next) => {
   // validate post data
   const { error } = userPostValidation.validate(req.body);
