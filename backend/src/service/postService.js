@@ -19,7 +19,10 @@ const getPost = async (userId, options, next) => {
 };
 
 const getPostById = async (id, userId, next) => {
-  const post = await Post.findById(id);
+  const post = await Post.findById(id).populate(
+    'replies.userId',
+    'name userName profilePic',
+  );;
   if (!post) {
     return next(generateAPIError('post not found', 400));
   }

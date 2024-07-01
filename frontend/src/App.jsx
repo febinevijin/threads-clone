@@ -33,7 +33,7 @@ function App() {
           element={user ? <UpdateProfilePage/> : <Navigate to="/" />}
         />
         <Route path="/:id" element={<UserPage />} />
-        <Route path="/:username/post/:pid" element={<PostPage />} />
+        <Route path="/:username/post/:id" element={<PostPage />} />
       </Routes>
       {user && <LogoutButton/>}
       {user && <CreatePost/>}
