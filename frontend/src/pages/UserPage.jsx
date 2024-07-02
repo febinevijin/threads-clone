@@ -4,16 +4,16 @@ import Post from "../components/Post";
 import { useParams } from "react-router-dom";
 import useShowToast from "../hooks/useShowToast";
 import { Flex, Spinner } from "@chakra-ui/react";
-// import { useRecoilState } from "recoil";
-// import postsAtom from "../atoms/postsAtom";
+import { useRecoilState } from "recoil";
+import postsAtom from "../atoms/postsAtom";
 
 const UserPage = () => {
   const [user, setUser] = useState(null);
   const { id } = useParams();
   const showToast = useShowToast();
   const [loading, setLoading] = useState(true)
-  // const [posts, setPosts] = useRecoilState(postsAtom);
-  const [posts, setPosts] = useState([]);
+  const [posts, setPosts] = useRecoilState(postsAtom);
+  // const [posts, setPosts] = useState([]);
   const [fetchingPosts, setFetchingPosts] = useState(true);
 
   // useEffect(() => {
@@ -104,8 +104,8 @@ const UserPage = () => {
     if (user) {
       getPosts();
     }
-  }, [user, showToast]);
-  
+  }, [user, showToast, setPosts]);
+  console.log(posts,"post is here")
   if (!user && loading) {
     return (
       <Flex justifyContent={"center"}>

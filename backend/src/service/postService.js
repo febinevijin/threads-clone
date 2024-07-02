@@ -84,14 +84,26 @@ const togglePostLike = async (postId, userId, next) => {
 };
 
 const replyToPost = async (text, postId, userId, next) => {
-  const post = await Post.findById(postId);
-  if (!post) {
-    return next(generateAPIError('post not found', 400));
-  }
-  const reply = { userId, text };
-  post.replies.push(reply);
-  await post.save();
-  return { message: 'reply added successfully' };
+  // const post = await Post.findById(postId);
+  // if (!post) {
+  //   return next(generateAPIError('post not found', 400));
+  // }
+  // const reply = { userId, text };
+  // post.replies.push(reply);
+  // await post.save();
+  // return { message: 'reply added successfully' };
+
+   const reply = { userId, text };
+   const updatedPost = await Post.findByIdAndUpdate(
+     postId,
+     { $push: { replies: reply } },
+     { new: true, runValidators: true },
+   ).populate('replies.userId', 'name userName profilePic');;
+
+   if (!updatedPost) {
+     return next(generateAPIError('Post not found', 400));
+   }
+  return updatedPost;
 };
 
 export const postService = {

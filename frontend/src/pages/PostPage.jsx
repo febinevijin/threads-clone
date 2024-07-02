@@ -27,6 +27,7 @@ const PostPage = () => {
   const { id } = useParams();
   const currentUser = useRecoilValue(userAtom);
   const navigate = useNavigate();
+ 
 
   const currentPost = posts[0];
 
@@ -40,10 +41,10 @@ const PostPage = () => {
           showToast("Error", data.error, "error");
           return;
         }
-         if (data.success === false && data.status === "failure") {
-           showToast("Error", data.message, "error");
-           return;
-         }
+        if (data.success === false && data.status === "failure") {
+          showToast("Error", data.message, "error");
+          return;
+        }
         setPosts([data.data]);
       } catch (error) {
         showToast("Error", error.message, "error");
@@ -52,6 +53,7 @@ const PostPage = () => {
     getPost();
   }, [showToast, id, setPosts]);
 
+  
   const handleDeletePost = async () => {
     try {
       if (!window.confirm("Are you sure you want to delete this post?")) return;
@@ -74,6 +76,7 @@ const PostPage = () => {
       showToast("Error", error.message, "error");
     }
   };
+
 
   if (!user && loading) {
     return (
@@ -132,7 +135,7 @@ const PostPage = () => {
       )}
 
       <Flex gap={3} my={3}>
-        <Actions post={currentPost} />
+        <Actions post={currentPost}  />
       </Flex>
 
       <Divider my={4} />

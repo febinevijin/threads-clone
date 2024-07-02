@@ -39,7 +39,7 @@ const CreatePost = () => {
   const showToast = useShowToast();
   const [loading, setLoading] = useState(false);
   const [posts, setPosts] = useRecoilState(postsAtom);
-  const { username } = useParams();
+  const { id } = useParams();
 
   const handleTextChange = (e) => {
     const inputText = e.target.value;
@@ -79,7 +79,7 @@ const CreatePost = () => {
          }
 
       showToast("Success", "Post created successfully", "success");
-      if (username === user.username) {
+      if (id === user._id) {
         setPosts([data.data, ...posts]);
       }
       onClose();

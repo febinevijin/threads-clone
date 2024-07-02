@@ -21,7 +21,7 @@ import useShowToast from "../hooks/useShowToast";
 import postsAtom from "../atoms/postsAtom";
 
 const Actions = ({ post }) => {
-  console.log(post)
+  
   const user = useRecoilValue(userAtom);
   const [liked, setLiked] = useState(post.likes.includes(user?._id));
   const [posts, setPosts] = useRecoilState(postsAtom);
@@ -32,24 +32,25 @@ const Actions = ({ post }) => {
   const showToast = useShowToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const updatePostRecoilFn = async () => {
-    try {
-      const res = await fetch("/api/post/feed");
-      const data = await res.json();
-      if (data.error) {
-        showToast("Error", data.error, "error");
-        return;
-      }
-      if (data.success === false && data.status === "failure") {
-        showToast("Error", data.message, "error");
-        return;
-      }
-      setPosts(data.data);
-    } catch (error) {
-      showToast("Error", error.message, "error");
-    }
-  };
-
+  // const updatePostRecoilFn = async () => {
+  //   try {
+  //     const res = await fetch("/api/post/feed");
+  //     const data = await res.json();
+  //     if (data.error) {
+  //       showToast("Error", data.error, "error");
+  //       return;
+  //     }
+  //     if (data.success === false && data.status === "failure") {
+  //       showToast("Error", data.message, "error");
+  //       return;
+  //     }
+  //     setPosts(data.data);
+  //     // return data;
+  //   } catch (error) {
+  //     showToast("Error", error.message, "error");
+  //   }
+  // };
+console.log(posts,'cheeeck');
   const handleLikeAndUnlike = async () => {
     if (!user)
       return showToast(
@@ -74,24 +75,27 @@ const Actions = ({ post }) => {
   }
       if (!liked) {
         // add the id of the current user to post.likes array
-       posts.map((p) => {
+       const updatedPosts=posts.map((p) => {
           if (p._id === post._id) {
             return { ...p, likes: [...p.likes, user._id] };
           }
           return p;
-        });
-        updatePostRecoilFn()
-        // setPosts(updatedPosts);
+       });
+        // console.log(updatedPosts,'pppp');
+      //  updatePostRecoilFn()
+        
+        setPosts(updatedPosts);
       } else {
         // remove the id of the current user from post.likes array
-        posts.map((p) => {
+        const updatedPosts = posts.map((p) => {
           if (p._id === post._id) {
             return { ...p, likes: p.likes.filter((id) => id !== user._id) };
           }
           return p;
         });
-        // setPosts(updatedPosts);
-        updatePostRecoilFn();
+        // console.log(updatedPosts);
+        // updatePostRecoilFn();
+        setPosts(updatedPosts);
       }
 
       setLiked(!liked);
@@ -120,19 +124,21 @@ const Actions = ({ post }) => {
         body: JSON.stringify({ text: reply }),
       });
       const data = await res.json();
+      console.log(data.data,'coments');
       if (data.error) return showToast("Error", data.error, "error");
   if (data.success === false && data.status === "failure") {
     showToast("Error", data.message, "error");
     return;
   }
-       posts.map((p) => {
-        if (p._id === post._id) {
-          return { ...p, replies: [...p.replies, data] };
-        }
-        return p;
-      });
-       updatePostRecoilFn();
-      // setPosts(updatedPosts);
+       const updatedPosts=posts.map((p) => {
+         if (p._id === post._id) {
+          //  return { ...p, replies: [...p.replies, data.data.replies] };
+           return { ...p, replies: data.data.replies };
+         }
+         return p;
+       });
+      //  updatePostRecoilFn();
+      setPosts(updatedPosts);
       showToast("Success", "Reply posted successfully", "success");
       onClose();
       setReply("");
