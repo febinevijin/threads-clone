@@ -87,7 +87,7 @@ const PostPage = () => {
   }
 
   if (!currentPost) return null;
-  console.log("currentPost", currentPost);
+ 
 
   return (
     <>

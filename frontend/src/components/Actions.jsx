@@ -50,7 +50,7 @@ const Actions = ({ post }) => {
   //     showToast("Error", error.message, "error");
   //   }
   // };
-console.log(posts,'cheeeck');
+
   const handleLikeAndUnlike = async () => {
     if (!user)
       return showToast(
@@ -81,7 +81,7 @@ console.log(posts,'cheeeck');
           }
           return p;
        });
-        // console.log(updatedPosts,'pppp');
+       
       //  updatePostRecoilFn()
         
         setPosts(updatedPosts);
@@ -93,7 +93,7 @@ console.log(posts,'cheeeck');
           }
           return p;
         });
-        // console.log(updatedPosts);
+       
         // updatePostRecoilFn();
         setPosts(updatedPosts);
       }
@@ -124,7 +124,7 @@ console.log(posts,'cheeeck');
         body: JSON.stringify({ text: reply }),
       });
       const data = await res.json();
-      console.log(data.data,'coments');
+   
       if (data.error) return showToast("Error", data.error, "error");
   if (data.success === false && data.status === "failure") {
     showToast("Error", data.message, "error");
@@ -132,7 +132,7 @@ console.log(posts,'cheeeck');
   }
        const updatedPosts=posts.map((p) => {
          if (p._id === post._id) {
-          //  return { ...p, replies: [...p.replies, data.data.replies] };
+          //  return { ...p, replies: [...p.replies, data.data] };
            return { ...p, replies: data.data.replies };
          }
          return p;

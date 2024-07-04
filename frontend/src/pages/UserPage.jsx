@@ -47,7 +47,7 @@ const UserPage = () => {
         
   //       const res = await fetch(`/api/post/user-post`);
   //       const data = await res.json();
-  //       console.log(data.data, "dsdfsfsfsdfsd");
+
   //       setPosts(data.data);
   //     } catch (error) {
   //       showToast("Error", error.message, "error");
@@ -91,7 +91,7 @@ const UserPage = () => {
       try {
         const res = await fetch(`/api/post/user-post`);
         const data = await res.json();
-        console.log(data.data, "Fetched posts");
+     
         setPosts(data.data);
       } catch (error) {
         showToast("Error", error.message, "error");
@@ -105,7 +105,7 @@ const UserPage = () => {
       getPosts();
     }
   }, [user, showToast, setPosts]);
-  console.log(posts,"post is here")
+
   if (!user && loading) {
     return (
       <Flex justifyContent={"center"}>
