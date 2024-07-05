@@ -24,6 +24,7 @@ import { appConfig } from './config/appConfig.js';
 import authRouter from './router/authRouter.js';
 import userRouter from './router/userRouter.js';
 import postRouter from './router/postRouter.js';
+import messageRouter from './router/messageRouter.js';
 
 connectDB();
 const app = express();
@@ -76,6 +77,7 @@ app.get('/check', async (req, res) => {
 app.use('/api/auth', authRouter);
 app.use('/api/user', userRouter);
 app.use('/api/post', postRouter);
+app.use('/api/messages', messageRouter);
 
 app.use(notFound);
 app.use(errorHandler);
