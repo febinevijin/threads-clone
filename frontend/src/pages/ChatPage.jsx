@@ -12,8 +12,41 @@ import {
 import Conversation from "../components/Conversation";
 // import { GiConversation } from "react-icons/gi";
 import MessageContainer from "../components/MessageContainer";
+import { useEffect, useState } from "react";
+import useShowToast from "../hooks/useShowToast";
+import { useRecoilState } from "recoil";
+import { conversationsAtom } from "../atoms/messagesAtom";
 
 const ChatPage = () => {
+  const showToast = useShowToast();
+  const [loadingConversations, setLoadingConversations] = useState(true);
+  const [conversations, setConversations] = useRecoilState(conversationsAtom);
+
+  useEffect(() => {
+    const getConversations = async () => {
+      try {
+        const res = await fetch("/api/messages/conversations");
+        const data = await res.json();
+        if (data.error) {
+          showToast("Error", data.error, "error");
+          return;
+        }
+        if (data.success === false && data.status === "failure") {
+          showToast("Error", data.message, "error");
+          return;
+        }
+        console.log(data.data);
+        setConversations(data.data);
+      } catch (error) {
+        showToast("Error", error.message, "error");
+      } finally {
+        setLoadingConversations(false);
+      }
+    };
+
+    getConversations();
+  }, [showToast, setConversations]);
+
   return (
     <Box
       position={"absolute"}
@@ -53,39 +86,31 @@ const ChatPage = () => {
             </Flex>
           </form>
 
-          {false &&
-          [0, 1, 2, 3, 4].map((_, i) => (
-          <Flex
-            key={i}
-            gap={4}
-            alignItems={"center"}
-            p={"1"}
-            borderRadius={"md"}
-          >
-            <Box>
-              <SkeletonCircle size={"10"} />
-            </Box>
-            <Flex w={"full"} flexDirection={"column"} gap={3}>
-              <Skeleton h={"10px"} w={"80px"} />
-              <Skeleton h={"8px"} w={"90%"} />
-            </Flex>
-          </Flex>
-          ))}
-                  <Conversation/>
-                  <Conversation/>
-                  <Conversation/>
-               
+          {loadingConversations &&
+            [0, 1, 2, 3, 4].map((_, i) => (
+              <Flex
+                key={i}
+                gap={4}
+                alignItems={"center"}
+                p={"1"}
+                borderRadius={"md"}
+              >
+                <Box>
+                  <SkeletonCircle size={"10"} />
+                </Box>
+                <Flex w={"full"} flexDirection={"column"} gap={3}>
+                  <Skeleton h={"10px"} w={"80px"} />
+                  <Skeleton h={"8px"} w={"90%"} />
+                </Flex>
+              </Flex>
+            ))}
 
-          {/* {!loadingConversations &&
-            conversations.map((conversation) => (
-              <Conversation
-                key={conversation._id}
-                isOnline={onlineUsers.includes(
-                  conversation.participants[0]._id
-                )}
-                conversation={conversation}
-              />
-            ))} */}
+          { conversations.map(conversation => 
+           ( <Conversation
+               key={conversation._id}
+               conversation={conversation}
+             />
+          ))}
         </Flex>
         {/* {!selectedConversation._id && ( */}
         {/* <Flex
@@ -100,7 +125,7 @@ const ChatPage = () => {
           <GiConversation size={100} />
           <Text fontSize={20}>Select a conversation to start messaging</Text>
               </Flex> */}
-              <MessageContainer/>
+        <MessageContainer />
         {/* )} */}
 
         {/* {selectedConversation._id && <MessageContainer />} */}
