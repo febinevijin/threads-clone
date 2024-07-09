@@ -25,9 +25,10 @@ import authRouter from './router/authRouter.js';
 import userRouter from './router/userRouter.js';
 import postRouter from './router/postRouter.js';
 import messageRouter from './router/messageRouter.js';
+import {app,server} from './socket/socket.js'
 
 connectDB();
-const app = express();
+// const app = express(); no need this , already initialized server.js
 const whitelist = appConfig.whiteList.split(',');
 
 app.set('trust proxy', 1); // trust first proxy
@@ -84,6 +85,6 @@ app.use(errorHandler);
 
 const PORT = appConfig.port;
 
-const server = app.listen(PORT, () => {
+ server.listen(PORT, () => {
   console.log(`server started on port ${PORT}`);
 });
