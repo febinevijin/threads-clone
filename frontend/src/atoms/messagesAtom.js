@@ -10,7 +10,7 @@ export const selectedConversationAtom = atom({
   default: {
     _id: "",
     userId: "",
-    username: "",
+    userName: "",
     userProfilePic: "",
   },
 });

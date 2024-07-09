@@ -3,26 +3,42 @@ import User from '../model/userModel.js';
 import mongoose from 'mongoose';
 import cloudinary from '../utils/cloudinary.js';
 
-const getUserDetailsById = async (id, userDetailsFlag = false, next) => {
+const getUserDetailsById = async (
+  id,
+  userName = null,
+  userDetailsFlag = false,
+  next,
+) => {
   if (!id) {
     return next(generateAPIError('Must pass user _id', 400));
   }
-  // Select fields based on userDetailsFlag flag
-  const fieldsToSelect = userDetailsFlag
-    ? '-password'
-    : '-password -following -followers';
-  // Find the user by id and select the required fields
-  const user = await User.findById(id).select(fieldsToSelect);
-  if (!user) return next(generateAPIError('user not found', 400));
- 
-  return user
+  
+  let user;
 
+  if (userName && userName !== undefined && userName !==null) {
+    user = await User.findOne({ $text: { $search: userName } }).select(
+      '-password -following -followers',
+    );
+  } else {
+    const fieldsToSelect = userDetailsFlag
+      ? '-password'
+      : '-password -following -followers';
+    user = await User.findById(id).select(fieldsToSelect);
+  }
+
+  // console.log(user,'update part');
+
+  if (!user) {
+    return next(generateAPIError('User not found', 400));
+  }
+
+  return user;
 };
 
 const postPageProfile = async (userId, id, next) => {
-  console.log(id);
+  // console.log(id);
   const user = await User.findById(id).select('-password ');
-  console.log(user);
+  // console.log(user);
   if (!user) return next(generateAPIError('user not found', 400));
   //  // Find the post user and check if the id is present in the following array
   const isFollow = await User.findOne({
@@ -39,10 +55,12 @@ const postPageProfile = async (userId, id, next) => {
 };
 
 const followUnFollow = async (id, currentUserId, next) => {
-  const userToModify = await getUserDetailsById(id, next);
+  // const userToModify = await getUserDetailsById(id, next);
   const userDetailsFlag = true;
+  const userName = null;
   const currentUser = await getUserDetailsById(
     currentUserId,
+    userName,
     userDetailsFlag,
     next,
   );
@@ -103,7 +121,13 @@ const updateUserProfile = async (id, userData, next) => {
   const { name, email, userName, bio } = userData;
   let { profilePic } = userData;
   const userDetailsFlag = true;
-  const checkUser = await getUserDetailsById(id, userDetailsFlag, next);
+  const userNameForDetails = null;
+  const checkUser = await getUserDetailsById(
+    id,
+    userNameForDetails,
+    userDetailsFlag,
+    next,
+  );
   // check user exist with same email or userName
   const query = {
     $or: [{ email }, { userName }],

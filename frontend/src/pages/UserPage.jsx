@@ -89,7 +89,7 @@ const UserPage = () => {
       if (!user) return;
       setFetchingPosts(true);
       try {
-        const res = await fetch(`/api/post/user-post`);
+        const res = await fetch(`/api/post/user-post/${id}`);
         const data = await res.json();
      
         setPosts(data.data);
@@ -104,7 +104,7 @@ const UserPage = () => {
     if (user) {
       getPosts();
     }
-  }, [user, showToast, setPosts]);
+  }, [user, showToast, setPosts,id]);
 
   if (!user && loading) {
     return (

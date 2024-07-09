@@ -45,8 +45,8 @@ export const getPostById = errorWrapper(async (req, res, next) => {
 });
 
 export const getUserPost = errorWrapper(async (req, res, next) => {
-  const userId = req.user._id;
-  console.log(userId);
+  const userId = req.params.id;
+  // console.log(userId);
   const data = await postService.getUserPost(userId, next);
   return responseUtils.success(res, {
     data,

@@ -20,20 +20,23 @@ export const followUnFollowUser = errorWrapper(async (req, res, next) => {
 
 export const getProfile = errorWrapper(async (req, res, next) => {
   const userDetailsFlag = true;
+  const userName = req.query.search;
 
   const data = await commonUserService.getUserDetailsById(
     req.user._id,
+    userName,
     userDetailsFlag,
-
-    next,
+    next
   );
   return responseUtils.success(res, {
     data,
     status: 200,
   });
 });
+
 export const postPageProfile = errorWrapper(async (req, res, next) => {
   const { id } = req.params;
+    
   if (!id) return next(generateAPIError('id should be provided', 400));
 
   const data = await userService.postPageProfile(req.user._id, id, next);

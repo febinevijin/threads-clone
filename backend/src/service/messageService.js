@@ -57,7 +57,7 @@ const getConversations = async (userId, next) => {
     participants: userId,
   }).populate({
     path: 'participants',
-    select: 'username profilePic',
+    select: 'userName profilePic',
   });
 // need improvement in this code
   // remove the current user from the participants array

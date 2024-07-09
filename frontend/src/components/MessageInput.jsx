@@ -13,42 +13,105 @@ import {
   ModalOverlay,
  
 } from "@chakra-ui/react";
+import { useState } from "react";
 import { BsFillImageFill } from "react-icons/bs";
 import { IoSendSharp } from "react-icons/io5";
-const MessageInput = () => {
+import useShowToast from "../hooks/useShowToast";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import { conversationsAtom, selectedConversationAtom } from "../atoms/messagesAtom";
+
+const MessageInput = ({ setMessages }) => {
+
+  const [messageText, setMessageText] = useState("");
+    const showToast = useShowToast();
+    const selectedConversation = useRecoilValue(selectedConversationAtom);
+    const setConversations = useSetRecoilState(conversationsAtom);
+    // const imageRef = useRef(null);
+    // const { onClose } = useDisclosure();
+    // const { handleImageChange, imgUrl, setImgUrl } = usePreviewImg();
+    const [isSending, setIsSending] = useState(false);
+  
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!messageText ) return;
+    if (isSending) return;
+
+    setIsSending(true);
+
+    try {
+      const res = await fetch("/api/messages", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          message: messageText,
+          recipientId: selectedConversation.userId,
+          
+        }),
+      });
+      const data = await res.json();
+      if (data.error) {
+        showToast("Error", data.error, "error");
+        return;
+      }
+        if (data.success === false && data.status === "failure") {
+          showToast("Error", data.message, "error");
+          return;
+        }
+     
+      setMessages((messages) => [...messages, data.data]);
+
+      setConversations((prevConvs) => {
+        const updatedConversations = prevConvs.map((conversation) => {
+          if (conversation._id === selectedConversation._id) {
+            return {
+              ...conversation,
+              lastMessage: {
+                text: messageText,
+                sender: data.data.sender,
+              },
+            };
+          }
+          return conversation;
+        });
+        return updatedConversations;
+      });
+      setMessageText("");
+      // setImgUrl("");
+    } catch (error) {
+      showToast("Error", error.message, "error");
+    } finally {
+      setIsSending(false);
+    }
+  };
   return (
     <Flex gap={2} alignItems={"center"}>
-      <form  style={{ flex: 95 }}>
+      <form style={{ flex: 95 }} onSubmit={handleSendMessage}>
         <InputGroup>
           <Input
             w={"full"}
             placeholder="Type a message"
-           
+            onChange={(e) => setMessageText(e.target.value)}
+            value={messageText}
           />
-          <InputRightElement  cursor={"pointer"}>
+          <InputRightElement onClick={handleSendMessage} cursor={"pointer"}>
             <IoSendSharp />
           </InputRightElement>
         </InputGroup>
       </form>
       <Flex flex={5} cursor={"pointer"}>
-        <BsFillImageFill size={20}  />
-        <Input
-          type={"file"}
-          hidden
-         
-        />
+        <BsFillImageFill size={20} />
+        <Input type={"file"} hidden />
       </Flex>
-      <Modal
-        isOpen=''
-       
-      >
+      <Modal isOpen="">
         <ModalOverlay />
         <ModalContent>
           <ModalHeader></ModalHeader>
           <ModalCloseButton />
           <ModalBody>
             <Flex mt={5} w={"full"}>
-              <Image src='' />
+              <Image src="" />
             </Flex>
             <Flex justifyContent={"flex-end"} my={2}>
               {/* {!isSending ? (
