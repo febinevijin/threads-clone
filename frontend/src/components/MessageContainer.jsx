@@ -13,17 +13,57 @@ import Message from "./Message";
 import MessageInput from "./MessageInput";
 import useShowToast from "../hooks/useShowToast";
 import { useEffect, useRef, useState } from "react";
-import { useRecoilValue } from "recoil";
-import {  selectedConversationAtom } from "../atoms/messagesAtom";
+import { useRecoilValue, useSetRecoilState } from "recoil";
+import {  conversationsAtom, selectedConversationAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
+import { useSocket } from "../context/SocketContext";
 const MessageContainer = () => {
   const showToast = useShowToast();
   const [messages, setMessages] = useState([]);
   const selectedConversation = useRecoilValue(selectedConversationAtom);
   const [loadingMessages, setLoadingMessages] = useState(true);
-  // const setConversations = useSetRecoilState(conversationsAtom);
+  const setConversations = useSetRecoilState(conversationsAtom);
   const messageEndRef = useRef(null);
   const currentUser = useRecoilValue(userAtom);
+  const { socket } = useSocket();
+  
+  useEffect(() => {
+      socket.on("newMessage", (message) => {
+        if (selectedConversation._id === message.conversationId) {
+          setMessages((prev) => [...prev, message]);
+        }
+
+        // make a sound if the window is not focused
+        // if (!document.hasFocus()) {
+        //   const sound = new Audio(messageSound);
+        //   sound.play();
+        // }
+
+        // update the the conversation list in left side , seeing last conversation
+        setConversations((prev) => {
+          const updatedConversations = prev.map((conversation) => {
+            if (conversation._id === message.conversationId) {
+              return {
+                ...conversation,
+                lastMessage: {
+                  text: message.text,
+                  sender: message.sender,
+                },
+              };
+            }
+            return conversation;
+          });
+          return updatedConversations;
+        });
+      });
+
+      return () => socket.off("newMessage");
+  }, [socket, selectedConversation, setConversations]);
+  
+  useEffect(() => {
+      messageEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    }, [messages]);
+
   useEffect(() => {
     const getMessages = async () => {
       setLoadingMessages(true);
@@ -113,10 +153,7 @@ const MessageContainer = () => {
                 message={message}
                 ownMessage={currentUser._id === message.sender}
               />
-              {/* <Message
-                message={message}
-                ownMessage={currentUser._id === message.sender}
-              /> */}
+             
             </Flex>
           ))}
       </Flex>

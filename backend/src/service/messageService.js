@@ -1,6 +1,7 @@
 import { generateAPIError } from '../error/apiError.js';
 import Conversation from '../model/conversationModel.js';
 import Message from '../model/messageModel.js';
+import { getRecipientSocketId, io } from '../socket/socket.js';
 
 const sendMessage = async (senderId, data, next) => {
   const { recipientId, message, img } = data;
@@ -35,6 +36,11 @@ const sendMessage = async (senderId, data, next) => {
     }),
   ]);
 
+  const recipientSocketId = getRecipientSocketId(recipientId);
+  if (recipientSocketId) {
+    io.to(recipientSocketId).emit('newMessage', newMessage);
+  }
+
   return newMessage;
 };
 const getMessages = async (userId, otherUserId, next) => {
@@ -59,7 +65,7 @@ const getConversations = async (userId, next) => {
     path: 'participants',
     select: 'userName profilePic',
   });
-// need improvement in this code
+  // need improvement in this code
   // remove the current user from the participants array
   conversations.forEach((conversation) => {
     conversation.participants = conversation.participants.filter(
