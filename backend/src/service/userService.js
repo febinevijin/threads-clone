@@ -180,6 +180,29 @@ const updateUserProfile = async (id, userData, next) => {
   };
 };
 
+const getSuggestedUsers = async (userId,next) => {
+  // exclude the current user from suggested users array and exclude users that current user is already following
+  // NEED UPDATION IN THIS QUERY
+  const usersFollowedByYou = await User.findById(userId).select('following');
+  const users = await User.aggregate([
+    {
+      $match: {
+        _id: { $ne: userId },
+      },
+    },
+    {
+      $sample: { size: 10 },
+    },
+  ]);
+  const filteredUsers = users.filter(
+    (user) => !usersFollowedByYou.following.includes(user._id),
+  );
+  const suggestedUsers = filteredUsers.slice(0, 4);
+
+  suggestedUsers.forEach((user) => (user.password = null));
+  return suggestedUsers;
+}
+
 export const commonUserService = {
   getUserDetailsById,
 };
@@ -188,4 +211,5 @@ export const userService = {
   followUnFollow,
   updateUserProfile,
   postPageProfile,
+  getSuggestedUsers,
 };
