@@ -56,10 +56,10 @@ export const getUserPost = errorWrapper(async (req, res, next) => {
 
 export const createPost = errorWrapper(async (req, res, next) => {
   // validate post data
-  const { error } = userPostValidation.validate(req.body);
-  if (error) {
-    return next(generateAPIError(error.details[0].message, 400));
-  }
+  // const { error } = userPostValidation.validate(req.body);
+  // if (error) {
+  //   return next(generateAPIError(error.details[0].message, 400));
+  // }
   let userId = req.user._id;
   const data = await postService.createPost(req.body, userId, next);
   return responseUtils.success(res, {

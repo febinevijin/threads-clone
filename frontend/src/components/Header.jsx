@@ -16,7 +16,7 @@ const Header = () => {
   const user = useRecoilValue(userAtom);
   const logout = useLogout();
   const setAuthScreen = useSetRecoilState(authScreenAtom);
-  // console.log(user,"checking user here...");
+  console.log(user,"checking user here...");
   return (
     <Flex justifyContent={"space-between"} mt={6} mb="12">
       {user && (
