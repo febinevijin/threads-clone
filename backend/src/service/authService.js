@@ -27,6 +27,10 @@ const loginUser = async (loginData, next) => {
     '_id password name email userName bio profilePic',
   );
   if (user && (await bcrypt.compare(password, user.password))) {
+    if (user.isFrozen) {
+      user.isFrozen = false;
+      await user.save();
+    }
     // Destructure the user object to exclude the password field
     const { password, ...userWithoutPassword } = user.toObject();
 

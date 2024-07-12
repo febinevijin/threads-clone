@@ -64,3 +64,11 @@ export const getSuggestedUsers = errorWrapper(async (req, res, next) => {
     status: 200,
   });
 });
+
+export const freezeAccount = errorWrapper(async (req, res, next) => {
+  const data = await userService.freezeAccount(req.user._id, next);
+  return responseUtils.success(res, {
+    data,
+    status: 200,
+  });
+});

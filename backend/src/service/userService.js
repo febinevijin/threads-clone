@@ -203,6 +203,17 @@ const getSuggestedUsers = async (userId,next) => {
   return suggestedUsers;
 }
 
+const freezeAccount = async (id, next) => {
+  const user =await User.findById(id).select("-password -following -followers")
+  if (!user) return next(generateAPIError("user not found", 404));
+  user.isFrozen = true;
+  await user.save();
+  return {
+    success: true,
+    message: 'profile freezed',
+  };
+};
+
 export const commonUserService = {
   getUserDetailsById,
 };
@@ -212,4 +223,5 @@ export const userService = {
   updateUserProfile,
   postPageProfile,
   getSuggestedUsers,
+  freezeAccount,
 };

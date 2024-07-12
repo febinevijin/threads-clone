@@ -15,6 +15,7 @@ const UserPage = () => {
   const [posts, setPosts] = useRecoilState(postsAtom);
   // const [posts, setPosts] = useState([]);
   const [fetchingPosts, setFetchingPosts] = useState(true);
+  console.log(user,"user")
 
   // useEffect(() => {
   //   const getUser = async () => {
@@ -74,6 +75,10 @@ const UserPage = () => {
           return;
         }
         setUser(data.data);
+         if (data.data.isFrozen) {
+           setUser(null);
+           return;
+         }
       } catch (error) {
         showToast("Error", error.message, "error");
       } finally {
