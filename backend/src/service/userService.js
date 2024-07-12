@@ -203,6 +203,22 @@ const getSuggestedUsers = async (userId,next) => {
   return suggestedUsers;
 }
 
+const searchUsers = async (search, currentUserId) => {
+  const users = await User.find({
+    $and: [
+      {
+        $or: [
+          { name: { $regex: search, $options: 'i' } },
+          { userName: { $regex: search, $options: 'i' } },
+        ],
+      },
+      { _id: { $ne: currentUserId } },
+    ],
+  }).select('-password -following -followers');
+
+  return users
+};
+
 const freezeAccount = async (id, next) => {
   const user =await User.findById(id).select("-password -following -followers")
   if (!user) return next(generateAPIError("user not found", 404));
@@ -224,4 +240,5 @@ export const userService = {
   postPageProfile,
   getSuggestedUsers,
   freezeAccount,
+  searchUsers,
 };

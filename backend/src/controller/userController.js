@@ -64,6 +64,16 @@ export const getSuggestedUsers = errorWrapper(async (req, res, next) => {
     status: 200,
   });
 });
+export const searchUsers = errorWrapper(async (req, res, next) => {
+
+  const { search } = req.query;
+  if (!search) return next(generateAPIError('user name should be provided', 400));
+  const data = await userService.searchUsers(search,req.user._id);
+  return responseUtils.success(res, {
+    data,
+    status: 200,
+  });
+});
 
 export const freezeAccount = errorWrapper(async (req, res, next) => {
   const data = await userService.freezeAccount(req.user._id, next);

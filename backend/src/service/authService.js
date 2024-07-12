@@ -24,7 +24,7 @@ const signUpUser = async (userData, next) => {
 const loginUser = async (loginData, next) => {
   const { userName, password } = loginData;
   const user = await User.findOne({ $text: { $search: userName } }).select(
-    '_id password name email userName bio profilePic',
+    '_id password name email userName bio profilePic isFrozen',
   );
   if (user && (await bcrypt.compare(password, user.password))) {
     if (user.isFrozen) {

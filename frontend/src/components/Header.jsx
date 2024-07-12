@@ -1,4 +1,4 @@
-import {  Button, Flex, Image, Link, useColorMode } from "@chakra-ui/react";
+import { Button, Flex, Image, Link, useColorMode } from "@chakra-ui/react";
 import { useRecoilValue, useSetRecoilState } from "recoil";
 import userAtom from "../atoms/userAtom";
 import { AiFillHome } from "react-icons/ai";
@@ -9,13 +9,14 @@ import useLogout from "../hooks/useLogout";
 import authScreenAtom from "../atoms/authAtom";
 import { BsFillChatQuoteFill } from "react-icons/bs";
 import { MdOutlineSettings } from "react-icons/md";
+import SearchUser from "./SearchUser";
 
 const Header = () => {
   const { colorMode, toggleColorMode } = useColorMode();
   const user = useRecoilValue(userAtom);
   const logout = useLogout();
   const setAuthScreen = useSetRecoilState(authScreenAtom);
-// console.log(user,"checking user here...");
+  // console.log(user,"checking user here...");
   return (
     <Flex justifyContent={"space-between"} mt={6} mb="12">
       {user && (
@@ -49,6 +50,9 @@ const Header = () => {
           <Link as={RouterLink} to={`/chat`}>
             <BsFillChatQuoteFill size={20} />
           </Link>
+
+          <SearchUser />
+
           <Link as={RouterLink} to={`/settings`}>
             <MdOutlineSettings size={20} />
           </Link>
