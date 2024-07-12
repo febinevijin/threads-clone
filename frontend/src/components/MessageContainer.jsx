@@ -17,6 +17,7 @@ import { useRecoilValue, useSetRecoilState } from "recoil";
 import {  conversationsAtom, selectedConversationAtom } from "../atoms/messagesAtom";
 import userAtom from "../atoms/userAtom";
 import { useSocket } from "../context/SocketContext";
+import messageSound from "../assets/sounds/message.mp3";
 const MessageContainer = () => {
   const showToast = useShowToast();
   const [messages, setMessages] = useState([]);
@@ -34,10 +35,10 @@ const MessageContainer = () => {
         }
 
         // make a sound if the window is not focused
-        // if (!document.hasFocus()) {
-        //   const sound = new Audio(messageSound);
-        //   sound.play();
-        // }
+        if (!document.hasFocus()) {
+          const sound = new Audio(messageSound);
+          sound.play();
+        }
 
         // update the the conversation list in left side , seeing last conversation
         setConversations((prev) => {
